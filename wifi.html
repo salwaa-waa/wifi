@@ -1,0 +1,545 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WiFi Finder - Simulasi</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f7fd;
+      color: #172b4d;
+      padding: 24px;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      background: #dceaff;
+      color: #2475f5;
+      border-radius: 15px;
+      font-size: 27px;
+    }
+
+    header h1 {
+      font-size: 26px;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      color: #71809b;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border: 1px solid #e2eaf5;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px #1c3d6810;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 18px;
+    }
+
+    /* Daftar Wi-Fi */
+    .wifi-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wifi-item {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid transparent;
+      background: #f8faff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      color: inherit;
+      transition: 0.2s;
+    }
+
+    .wifi-item:hover {
+      border-color: #8bb7ff;
+      background: #f0f6ff;
+    }
+
+    .wifi-item.active {
+      background: #eaf2ff;
+      border-color: #3980ff;
+    }
+
+    .wifi-icon {
+      font-size: 25px;
+      color: #347cf6;
+    }
+
+    .wifi-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .wifi-name {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .wifi-signal {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #75849e;
+    }
+
+    .arrow {
+      color: #8a9bb5;
+    }
+
+    /* Detail jaringan */
+    .network-banner {
+      background: linear-gradient(120deg, #e1edff, #f0f6ff);
+      padding: 24px;
+      border-radius: 15px;
+      margin-bottom: 22px;
+    }
+
+    .network-heading {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 16px;
+    }
+
+    .large-icon {
+      font-size: 38px;
+      color: #347cf6;
+    }
+
+    .network-heading h2 {
+      margin: 0 0 7px;
+      font-size: 24px;
+      overflow-wrap: anywhere;
+    }
+
+    .network-heading p {
+      color: #667995;
+      font-size: 13px;
+    }
+
+    .network-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      padding: 8px 12px;
+      background: #ffffffb8;
+      border-radius: 20px;
+      color: #566b8b;
+      font-size: 12px;
+    }
+
+    /* Password simulasi */
+    .password-description {
+      color: #71809b;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-top: -8px;
+      margin-bottom: 18px;
+    }
+
+    .password-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .password-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f3f7fd;
+      padding: 13px;
+      border-radius: 11px;
+    }
+
+    .password-number {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #dfeaff;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .password-text {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .copy-button {
+      background: transparent;
+      border: none;
+      color: #347cf6;
+      padding: 6px;
+      border-radius: 7px;
+    }
+
+    .copy-button:hover {
+      background: #dceaff;
+    }
+
+    /* Tombol generate */
+    .generate-button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 11px;
+      color: white;
+      background: #249c72;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .generate-button:hover {
+      background: #18835f;
+      transform: translateY(-1px);
+    }
+
+    .generate-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #f1f6ff;
+      color: #647894;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .note strong {
+      display: block;
+      color: #334968;
+      margin-bottom: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #75849e;
+      padding: 35px 10px;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #8b98ac;
+      font-size: 12px;
+    }
+
+    /* Responsif untuk HP dan tablet */
+    @media (max-width: 760px) {
+      body {
+        padding: 16px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        margin-bottom: 20px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+
+      .card {
+        padding: 17px;
+      }
+
+      .network-banner {
+        padding: 18px;
+      }
+
+      .network-heading h2 {
+        font-size: 21px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .wifi-item {
+        padding: 11px;
+      }
+
+      .password-item {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <div class="logo">⌁</div>
+      <div>
+        <h1>WiFi Finder</h1>
+        <p>Temukan jaringan melalui data simulasi</p>
+      </div>
+    </header>
+
+    <main class="layout">
+
+      <!-- Daftar jaringan -->
+      <section class="card">
+        <h2>Jaringan Wi-Fi Tersedia</h2>
+        <div class="wifi-list" id="wifiList"></div>
+      </section>
+
+      <!-- Detail jaringan dan password -->
+      <section class="card" id="detailPanel">
+        <div id="networkDetail"></div>
+
+        <h2>Kemungkinan Password</h2>
+        <p class="password-description">
+          Berikut contoh password dummy yang dibuat secara acak
+          untuk keperluan demonstrasi aplikasi.
+        </p>
+
+        <div class="password-list" id="passwordList"></div>
+
+        <button class="generate-button" id="generateButton">
+          ↻ &nbsp; Generate Password Baru
+        </button>
+
+        <div class="note">
+          <strong>ⓘ Catatan</strong>
+          Password yang ditampilkan hanyalah data simulasi.
+          Daftar ini tidak memprediksi atau memverifikasi password
+          asli jaringan Wi-Fi.
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      WiFi Finder &copy; 2026 — Demo antarmuka berbasis data dummy
+    </footer>
+  </div>
+
+  <script>
+    // 1. Data jaringan Wi-Fi dummy
+    const wifiNetworks = [
+      { name: "HomeNet", signal: 92, security: "WPA2", frequency: "2.4 GHz" },
+      { name: "Cafe_Sejahtera", signal: 78, security: "WPA2", frequency: "2.4 GHz" },
+      { name: "Universitas-Guest", signal: 64, security: "Terbuka", frequency: "2.4 GHz" },
+      { name: "RuangKelas_5G", signal: 58, security: "WPA2", frequency: "5 GHz" },
+      { name: "Indomaret_WiFi", signal: 47, security: "WPA2", frequency: "2.4 GHz" },
+      { name: "TP-Link_Office", signal: 42, security: "WPA3", frequency: "5 GHz" },
+      { name: "Kost_Mawar", signal: 36, security: "WPA2", frequency: "2.4 GHz" },
+      { name: "FamilyNet", signal: 28, security: "WPA2", frequency: "5 GHz" }
+    ];
+
+    let selectedNetwork = 0;
+
+    // 2. Mengambil elemen HTML
+    const wifiList = document.getElementById("wifiList");
+    const networkDetail = document.getElementById("networkDetail");
+    const passwordList = document.getElementById("passwordList");
+    const generateButton = document.getElementById("generateButton");
+
+    // 3. Menampilkan daftar jaringan
+    function renderWifiList() {
+      wifiList.innerHTML = "";
+
+      wifiNetworks.forEach((wifi, index) => {
+        const button = document.createElement("button");
+        button.className =
+          "wifi-item" + (index === selectedNetwork ? " active" : "");
+
+        button.setAttribute("aria-pressed", index === selectedNetwork);
+
+        button.innerHTML = `
+          <span class="wifi-icon">⌁</span>
+          <span class="wifi-info">
+            <span class="wifi-name"></span>
+            <span class="wifi-signal">
+              ${wifi.security === "Terbuka" ? "◉" : "🔒"}
+              &nbsp; Sinyal: ${wifi.signal}%
+            </span>
+          </span>
+          <span class="arrow">›</span>
+        `;
+
+        // Menghindari nama jaringan ditafsirkan sebagai HTML
+        button.querySelector(".wifi-name").textContent = wifi.name;
+
+        button.addEventListener("click", () => {
+          selectedNetwork = index;
+          renderWifiList();
+          renderNetworkDetail();
+          generatePasswords();
+        });
+
+        wifiList.appendChild(button);
+      });
+    }
+
+    // 4. Menampilkan detail jaringan yang dipilih
+    function renderNetworkDetail() {
+      const wifi = wifiNetworks[selectedNetwork];
+
+      networkDetail.innerHTML = `
+        <div class="network-banner">
+          <div class="network-heading">
+            <span class="large-icon">⌁</span>
+            <div>
+              <h2 id="selectedName"></h2>
+              <p>${wifi.security === "Terbuka"
+                ? "◉ Jaringan terbuka (simulasi)"
+                : "🔒 Jaringan terlindungi (simulasi)"}</p>
+            </div>
+          </div>
+
+          <div class="network-meta">
+            <span class="meta-pill">▥ Sinyal: ${wifi.signal}%</span>
+            <span class="meta-pill">◉ ${wifi.frequency}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("selectedName").textContent = wifi.name;
+    }
+
+    // 5. Membuat contoh password acak, bukan menebak password asli
+    function generatePasswords() {
+      const wifi = wifiNetworks[selectedNetwork];
+      const randomPart = () => Math.random().toString(36).slice(2, 7);
+
+      const suggestions = [
+        wifi.name.replace(/[^a-zA-Z0-9]/g, "") + "@" + Math.floor(1000 + Math.random() * 9000),
+        "Demo_" + randomPart() + "!" + Math.floor(Math.random() * 99),
+        "Wifi-" + randomPart() + "#" + Math.floor(10 + Math.random() * 90),
+        randomPart().toUpperCase() + "_" + randomPart() + "2026",
+        "Sample@" + randomPart() + Math.floor(100 + Math.random() * 900)
+      ];
+
+      passwordList.innerHTML = "";
+
+      suggestions.forEach((password, index) => {
+        const row = document.createElement("div");
+        row.className = "password-item";
+
+        const number = document.createElement("span");
+        number.className = "password-number";
+        number.textContent = index + 1;
+
+        const text = document.createElement("span");
+        text.className = "password-text";
+        text.textContent = password;
+
+        const copyButton = document.createElement("button");
+        copyButton.className = "copy-button";
+        copyButton.textContent = "▢";
+        copyButton.title = "Salin contoh password";
+        copyButton.setAttribute("aria-label", "Salin contoh password");
+
+        copyButton.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(password);
+            copyButton.textContent = "✓";
+            copyButton.title = "Tersalin";
+
+            setTimeout(() => {
+              copyButton.textContent = "▢";
+              copyButton.title = "Salin contoh password";
+            }, 1500);
+          } catch (error) {
+            // Alternatif jika Clipboard API tidak tersedia
+            window.prompt("Salin contoh password ini:", password);
+          }
+        });
+
+        row.append(number, text, copyButton);
+        passwordList.appendChild(row);
+      });
+    }
+
+    // 6. Tombol untuk membuat kumpulan contoh baru
+    generateButton.addEventListener("click", () => {
+      generatePasswords();
+    });
+
+    // 7. Jalankan aplikasi saat halaman dibuka
+    renderWifiList();
+    renderNetworkDetail();
+    generatePasswords();
+  </script>
+</body>
+</html>
